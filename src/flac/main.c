@@ -1170,6 +1170,10 @@ static void usage_header(void)
 	printf("Copyright (C) 2000-2009  Josh Coalson\n");
 	printf("Copyright (C) 2011-2016  Xiph.Org Foundation\n");
 	printf("\n");
+	printf("   Patched for Logitech Media Server:\n");
+	printf("   The '--skip' and '--until' mm:ss.ss specifications have been\n");
+	printf("   relaxed and will now accept either a '.' or the current locale's\n");
+	printf("   decimal separator (generally ',' where not '.').\n\n");
 	printf("This program is free software; you can redistribute it and/or\n");
 	printf("modify it under the terms of the GNU General Public License\n");
 	printf("as published by the Free Software Foundation; either version 2\n");
