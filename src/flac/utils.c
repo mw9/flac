@@ -65,8 +65,10 @@ static FLAC__bool local__parse_uint64_(const char *s, FLAC__uint64 *value)
 static FLAC__bool local__parse_timecode_(const char *s, double *value)
 {
 	double ret;
+	double secs;
 	uint32_t i;
 	char c, *endptr;
+	char *dpnt_ptr;
 
 	/* parse [0-9][0-9]*: */
 	c = *s++;
@@ -85,10 +87,25 @@ static FLAC__bool local__parse_timecode_(const char *s, double *value)
 	/* parse [0-9]*[.,]?[0-9]* i.e. a sign-less rational number (. or , OK for fractional seconds, to support different locales) */
 	if(strspn(s, "1234567890.,") != strlen(s))
 		return false;
-	ret += strtod(s, &endptr);
-	if (endptr == s || *endptr)
-		return false;
+	secs = strtod(s, &endptr);
+	if (endptr == s || *endptr) {
+		/* We may have failed because our decimal separator (either '.' or ',') doesn't match the locale */
+		dpnt_ptr = strpbrk(s, ".,");
+		if (dpnt_ptr == NULL)
+			return false;
 
+		/* Switch our decimal separator from '.' to ',' or vice versa, and retry */
+		if (*dpnt_ptr == '.')
+			*dpnt_ptr = ',';
+		else
+			*dpnt_ptr = '.';
+
+		secs = strtod(s, &endptr);
+		if (endptr == s || *endptr)
+			return false;
+	}
+
+	ret += secs;
 	*value = ret;
 	return true;
 }
