@@ -310,6 +310,12 @@ int main(int argc, char *argv[])
 #endif
 
 	srand((uint32_t)time(0));
+
+#if 1
+/* LMS patch: Use C locale exclusively */
+	setlocale(LC_ALL, "C"); /* Belt & braces. Should be the default anyway */
+#else
+/* Original code block: Sets up user locale */
 #ifdef _WIN32
 	{
 		const char *var;
@@ -324,6 +330,9 @@ int main(int argc, char *argv[])
 #else
 	setlocale(LC_ALL, "");
 #endif
+/* Original code block ends */
+#endif
+
 	if(!init_options()) {
 		flac__utils_printf(stderr, 1, "ERROR: allocating memory\n");
 		retval = 1;
@@ -1170,6 +1179,10 @@ static void usage_header(void)
 	printf("Copyright (C) 2000-2009  Josh Coalson\n");
 	printf("Copyright (C) 2011-2016  Xiph.Org Foundation\n");
 	printf("\n");
+	printf("   Patched for Logitech Media Server:\n");
+	printf("   This version of flac operates exclusively in the 'C'\n");
+	printf("   locale. In particular, '--skip' and '--until' mm:ss.ss\n");
+	printf("   specifications require a '.' as decimal separator.\n\n");
 	printf("This program is free software; you can redistribute it and/or\n");
 	printf("modify it under the terms of the GNU General Public License\n");
 	printf("as published by the Free Software Foundation; either version 2\n");
